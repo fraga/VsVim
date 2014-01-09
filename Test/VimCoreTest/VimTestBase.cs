@@ -33,7 +33,7 @@ namespace Vim.UnitTest
         private IVimBufferFactory _vimBufferFactory;
         private ICommonOperationsFactory _commonOperationsFactory;
         private IVimErrorDetector _vimErrorDetector;
-        private IWordUtilFactory _wordUtilFactory;
+        private IWordUtil _wordUtil;
         private IFoldManagerFactory _foldManagerFactory;
         private IBufferTrackingService _bufferTrackingService;
         private IBulkOperations _bulkOperations;
@@ -83,9 +83,9 @@ namespace Vim.UnitTest
             get { return _commonOperationsFactory; }
         }
 
-        public IWordUtilFactory WordUtilFactory
+        public IWordUtil WordUtil
         {
-            get { return _wordUtilFactory; }
+            get { return _wordUtil; }
         }
 
         public IFoldManagerFactory FoldManagerFactory
@@ -162,7 +162,7 @@ namespace Vim.UnitTest
             _vimBufferFactory = CompositionContainer.GetExportedValue<IVimBufferFactory>();
             _vimErrorDetector = CompositionContainer.GetExportedValue<IVimErrorDetector>();
             _commonOperationsFactory = CompositionContainer.GetExportedValue<ICommonOperationsFactory>();
-            _wordUtilFactory = CompositionContainer.GetExportedValue<IWordUtilFactory>();
+            _wordUtil = CompositionContainer.GetExportedValue<IWordUtil>();
             _bufferTrackingService = CompositionContainer.GetExportedValue<IBufferTrackingService>();
             _foldManagerFactory = CompositionContainer.GetExportedValue<IFoldManagerFactory>();
             _bulkOperations = CompositionContainer.GetExportedValue<IBulkOperations>();
@@ -308,7 +308,7 @@ namespace Vim.UnitTest
             statusUtil = statusUtil ?? new StatusUtil();
             undoRedoOperations = undoRedoOperations ?? CreateUndoRedoOperations(statusUtil);
             windowSettings = windowSettings ?? new WindowSettings(vimTextBuffer.GlobalSettings);
-            wordUtil = wordUtil ?? WordUtilFactory.GetWordUtil(vimTextBuffer.TextBuffer);
+            wordUtil = wordUtil ?? WordUtil;
             return new VimBufferData(
                 vimTextBuffer,
                 textView,
@@ -355,7 +355,7 @@ namespace Vim.UnitTest
 
         protected ITextStructureNavigator CreateTextStructureNavigator(ITextBuffer textBuffer, WordKind kind)
         {
-            return WordUtilFactory.GetWordUtil(textBuffer).CreateTextStructureNavigator(kind);
+            return WordUtil.CreateTextStructureNavigator(kind, textBuffer.ContentType);
         }
 
         internal CommandUtil CreateCommandUtil(
