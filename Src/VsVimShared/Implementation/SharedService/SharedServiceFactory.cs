@@ -4,6 +4,7 @@ using System.Linq;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using NLog;
 
 namespace VsVim.Implementation.SharedService
 {
@@ -22,6 +23,9 @@ namespace VsVim.Implementation.SharedService
             var factory = factories.FirstOrDefault(x => x.Version == version);
             if (factory == null)
             {
+#if DEBUG
+                LogManager.GetLogger("SharedServiceFactory").Error("Factory was null, falling back to default shared factory");
+#endif
                 factory = new DefaultSharedServiceFactory();
             }
 
